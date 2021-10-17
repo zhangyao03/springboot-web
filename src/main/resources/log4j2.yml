@@ -1,0 +1,153 @@
+Configuration:
+  status: info
+  properties:
+    property:
+      - name: logDir
+        value: ${sys:catalina.base}/logs
+      - name: defaultPattern
+        value: "[%X{QTRACER}][%d{yyyy-MM-dd HH:mm:ss.SSS}][%p][%C:%L] %m%n"
+      - name: defaultCharset
+        value: UTF-8
+  appenders:
+    Console:
+      name: console
+      PatternLayout:
+        Pattern: "${defaultPattern}"
+        Charset: "${defaultCharset}"
+      Filters:
+        ThresholdFilter:
+          level: info
+    RollingFile:
+      - name: dbLogAppender
+        fileName: "${logDir}/db.log"
+        filePattern: "${logDir}/db.%d{yyyy-MM-dd}.log.gz"
+        PatternLayout:
+          Pattern: "${defaultPattern}"
+          Charset: "${defaultCharset}"
+        Policies:
+          TimeBasedTriggeringPolicy: {}
+        Filters:
+          ThresholdFilter:
+            level: info
+      - name: qmonitorAppender
+        fileName: "${logDir}/qmonitor.log"
+        filePattern: "${logDir}/qmonitor.%d{yyyy-MM-dd}.log.gz"
+        PatternLayout:
+          Pattern: "${defaultPattern}"
+          Charset: "${defaultCharset}"
+        Policies:
+          TimeBasedTriggeringPolicy: {}
+        Filters:
+          ThresholdFilter:
+            level: info
+      - name: qmqDetailLogAppender
+        fileName: "${logDir}/qmq-detail.log"
+        filePattern: "${logDir}/qmq-detail.%d{yyyy-MM-dd}.log.gz"
+        PatternLayout:
+          Pattern: "${defaultPattern}"
+          Charset: "${defaultCharset}"
+        Policies:
+          TimeBasedTriggeringPolicy: {}
+        Filters:
+          ThresholdFilter:
+            level: info
+      - name: slowSqlLogAppender
+        fileName: "${logDir}/slow-sql.log"
+        filePattern: "${logDir}/slow-sql.%d{yyyy-MM-dd}.log.gz"
+        PatternLayout:
+          Pattern: "${defaultPattern}"
+          Charset: "${defaultCharset}"
+        Policies:
+          TimeBasedTriggeringPolicy: {}
+        Filters:
+          ThresholdFilter:
+            level: info
+      - name: externalHttpRequestAppender
+        fileName: "${logDir}/http-request-external.log"
+        filePattern: "${logDir}/http-request-external.%d{yyyy-MM-dd}.log.gz"
+        PatternLayout:
+          Pattern: "${defaultPattern}"
+          Charset: "${defaultCharset}"
+        Policies:
+          TimeBasedTriggeringPolicy: {}
+        Filters:
+          ThresholdFilter:
+            level: info
+      - name: businessExceptionLogAppender
+        fileName: "${logDir}/business-exception.log"
+        filePattern: "${logDir}/business-exception.%d{yyyy-MM-dd}.log.gz"
+        PatternLayout:
+          Pattern: "${defaultPattern}"
+          Charset: "${defaultCharset}"
+        Policies:
+          TimeBasedTriggeringPolicy: {}
+        Filters:
+          ThresholdFilter:
+            level: warn
+      - name: errorLogAppender
+        fileName: "${logDir}/error.log"
+        filePattern: "${logDir}/error.%d{yyyy-MM-dd}.log.gz"
+        PatternLayout:
+          Pattern: "${defaultPattern}"
+          Charset: "${defaultCharset}"
+        Policies:
+          TimeBasedTriggeringPolicy: {}
+        Filters:
+          ThresholdFilter:
+            level: warn
+  Loggers:
+    logger:
+      - name: com.qunar.db.resource
+        level: info
+        additivity: false
+        AppenderRef:
+          - ref: dbLogAppender
+          - ref: errorLogAppender
+      - name: com.qunar.redis
+        level: info
+        additivity: false
+        AppenderRef:
+          - ref: dbLogAppender
+          - ref: errorLogAppender
+      - name: com.qunar.flight.qmonitor
+        level: info
+        additivity: false
+        AppenderRef:
+          - ref: qmonitorAppender
+          - ref: errorLogAppender
+      - name: qunar.tc.qmq
+        level: info
+        additivity: false
+        AppenderRef:
+          - ref: qmqDetailLogAppender
+          - ref: errorLogAppender
+      - name: businessExceptionLogger
+        level: warn
+        additivity: false
+        AppenderRef:
+          ref: businessExceptionLogAppender
+      - name: com.alibaba.druid.filter.stat.StatFilter
+        level: info
+        additivity: false
+        AppenderRef:
+          - ref: slowSqlLogAppender
+          - ref: errorLogAppender
+      - name: com.qunar.hotel.qmp.ymir.lottery.customer.helper.SqlTimeFilter
+        level: info
+        additivity: false
+        AppenderRef:
+          - ref: slowSqlLogAppender
+          - ref: errorLogAppender
+      - name: com.qunar.hotel.qmp.ymir.lottery.common.util.AbstractAsyncHttpHandler
+        level: info
+        additivity: false
+        AppenderRef:
+          - ref: externalHttpRequestAppender
+          - ref: errorLogAppender
+      - name: com.qunar.hotel.qta.base.monitor
+        level: warn
+    Root:
+      level: info
+      AppenderRef:
+        - ref: console
+        - ref: errorLogAppender
